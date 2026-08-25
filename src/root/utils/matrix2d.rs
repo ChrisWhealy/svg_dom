@@ -30,3 +30,17 @@ pub struct Matrix2D {
     /// Vertical translation, in user units (usually pixels) — the SVG matrix's `f` component.
     pub v_trans: f64,
 }
+
+impl Matrix2D {
+    /// Returns the identity matrix — the neutral transform that maps every point to itself.
+    pub fn identity() -> Self {
+        Self {
+            h_scale: 1.0,
+            v_scale: 1.0,
+            h_skew: 0.0,
+            v_skew: 0.0,
+            h_trans: 0.0,
+            v_trans: 0.0,
+        }
+    }
+}

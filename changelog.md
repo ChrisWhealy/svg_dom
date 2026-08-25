@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 # [Unreleased]
 
+## [0.2.14] - 2026-08-25
+
+## Added
+
+- Give `Matrix2D` an `identity` function (``)
+
 # [Released]
 
 ## [0.2.13] - 2026-08-21
