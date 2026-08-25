@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Added
 
-- Give `Matrix2D` an `identity` function (``)
+- Give `Matrix2D` an `identity` function (`8d0fb38`)
 
 # [Released]
 
