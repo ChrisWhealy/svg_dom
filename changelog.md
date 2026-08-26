@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Added
 
-- Implement `std::error::Error` for `Error` (``)
+- Implement `std::error::Error` for `Error` (`da3c314`)
 
 ## [0.2.15] - 2026-08-26
 
