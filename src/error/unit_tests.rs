@@ -247,3 +247,27 @@ fn should_error_on_reserved_attribute_inner_value() -> Result<(), String> {
     ensure_eq!(inner, "id");
     Ok(())
 }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// std::error::Error
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/// Compile-only check: fails to build if `Error` ever stops implementing `std::error::Error`.
+///
+/// For example, a downstream crate such as `svg-dom-graph`'s own `Error::Svg` variant wraps this `Error` and relies on
+/// this implementation to participate in `?`-conversion via `From` and to expose it through the normal `Error::source()`
+/// channel.
+#[test]
+fn should_implement_std_error() -> Result<(), String> {
+    fn assert_std_error<T: std::error::Error>() {}
+    assert_std_error::<Error>();
+    Ok(())
+}
+
+#[test]
+fn should_error_on_source_being_none() -> Result<(), String> {
+    use std::error::Error as _;
+    // Every variant carries a plain String/&'static str message, not another error value, so the default
+    // `source()` is correct — this pins that down explicitly rather than leaving it implicit.
+    ensure_eq!(Error::Dom("x".into()).source().is_none(), true);
+    Ok(())
+}

@@ -319,5 +319,14 @@ impl std::fmt::Display for Error {
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/// Every variant already carries its own message as a plain `String` or `&'static str`, not another error value, so the
+/// default `source()` (`None`) is correct as-is — nothing here needs overriding.
+///
+/// This is needed by any downstream crates that wrap this `Error` (for example `svg-dom-graph`'s own `Error::Svg`
+/// variant) and allows them to participate properly in the standard error chain: `?`-conversion via `From`, and
+/// `Error::source()` returning a real `&dyn std::error::Error` rather than `None` even for the wrapping variant.
+impl std::error::Error for Error {}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #[cfg(test)]
 mod unit_tests;
