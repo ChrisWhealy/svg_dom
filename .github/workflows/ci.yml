@@ -88,15 +88,16 @@ jobs:
       - name: Clippy (demo-app)
         run: cargo clippy -p svg-dom-demo --target wasm32-unknown-unknown -- -D warnings
 
+      # jetli/wasm-pack-action was previously used here, but its last release (v0.4.0, 2022) declares a `node16`
+      # runtime, which GitHub has deprecated — every job using it now emits a dependency-maintenance warning even
+      # though CI itself stays green, and there is no newer release to bump to. taiki-e/install-action (already
+      # used below for cargo-deny/cargo-llvm-cov/cargo-nextest) is actively maintained and installs wasm-pack
+      # straight from its own GitHub Releases — pinning the tool version here keeps the same reproducibility the
+      # previous pin gave. Bump deliberately when a newer wasm-pack is actually needed.
       - name: Install wasm-pack
-        uses: jetli/wasm-pack-action@v0.4.0
+        uses: taiki-e/install-action@v2
         with:
-          # Pinned rather than left at the action's default "latest": with no version pinned, every run does an
-          # extra "search latest release" round-trip against the GitHub API/CDN before downloading it, which is
-          # both non-reproducible (a new wasm-pack release can silently change CI behaviour) and one more place a
-          # transient failure (e.g. a release-download 504) can break an otherwise-unrelated change. Bump this
-          # deliberately when a newer wasm-pack is actually needed.
-          version: "v0.15.0"
+          tool: wasm-pack@0.15.0
 
       - name: wasm-pack build (the published web artifact)
         run: wasm-pack build --target web
@@ -128,15 +129,12 @@ jobs:
       # breakage is tracked upstream at https://github.com/actions/runner-images/issues/10015.
       - name: Allow unprivileged user namespaces (Firefox/Chromium sandbox needs this on Ubuntu 24.04 runners)
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      # See the `wasm` job's own `Install wasm-pack` step for why this uses taiki-e/install-action rather than
+      # jetli/wasm-pack-action.
       - name: Install wasm-pack
-        uses: jetli/wasm-pack-action@v0.4.0
+        uses: taiki-e/install-action@v2
         with:
-          # Pinned rather than left at the action's default "latest": with no version pinned, every run does an
-          # extra "search latest release" round-trip against the GitHub API/CDN before downloading it, which is
-          # both non-reproducible (a new wasm-pack release can silently change CI behaviour) and one more place a
-          # transient failure (e.g. a release-download 504) can break an otherwise-unrelated change. Bump this
-          # deliberately when a newer wasm-pack is actually needed.
-          version: "v0.15.0"
+          tool: wasm-pack@0.15.0
       - name: Run the browser integration tests
         run: wasm-pack test --headless --${{ matrix.browser }}
 
@@ -160,15 +158,12 @@ jobs:
       # so it never attempts the AppArmor-dependent sandbox initialisation that workaround exists for — see
       # `tests/cdp/main.rs`'s own `# Why the browser is launched with sandbox(false)` doc section. The
       # `sudo sysctl` step `browser-tests` needs has no effect here and is deliberately omitted.
+      # See the `wasm` job's own `Install wasm-pack` step for why this uses taiki-e/install-action rather than
+      # jetli/wasm-pack-action.
       - name: Install wasm-pack
-        uses: jetli/wasm-pack-action@v0.4.0
+        uses: taiki-e/install-action@v2
         with:
-          # Pinned rather than left at the action's default "latest": with no version pinned, every run does an
-          # extra "search latest release" round-trip against the GitHub API/CDN before downloading it, which is
-          # both non-reproducible (a new wasm-pack release can silently change CI behaviour) and one more place a
-          # transient failure (e.g. a release-download 504) can break an otherwise-unrelated change. Bump this
-          # deliberately when a newer wasm-pack is actually needed.
-          version: "v0.15.0"
+          tool: wasm-pack@0.15.0
 
       - name: Chrome version (diagnostic — the runner image ships one, nothing to install)
         run: google-chrome --version || google-chrome-stable --version || chromium-browser --version
